@@ -543,14 +543,18 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
         var selectionIndicatorFrame : CGRect = CGRect()
         
         if useMenuLikeSegmentedControl {
-            selectionIndicatorFrame = CGRect(x: 0.0, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: self.view.frame.width / CGFloat(controllerArray.count), height: selectionIndicatorHeight)
+            
+            print("Indicator Width \(self.view.frame.width / CGFloat(controllerArray.count)) ")
+            print("Indicator width after subtracing 50 \(self.view.frame.width / CGFloat(controllerArray.count) - 50)")
+            
+            selectionIndicatorFrame = CGRect(x: 25, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: (self.view.frame.width / CGFloat(controllerArray.count) - 50), height: selectionIndicatorHeight)
         } else if menuItemWidthBasedOnTitleTextWidth {
-            selectionIndicatorFrame = CGRect(x: menuMargin, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: menuItemWidths[0], height: selectionIndicatorHeight)
+            selectionIndicatorFrame = CGRect(x: menuMargin + 25, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: (menuItemWidths[0] - 50), height: selectionIndicatorHeight)
         } else {
             if centerMenuItems  {
-                selectionIndicatorFrame = CGRect(x: startingMenuMargin + menuMargin, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: menuItemWidth, height: selectionIndicatorHeight)
+                selectionIndicatorFrame = CGRect(x: startingMenuMargin + menuMargin + 25, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: (menuItemWidth - 50), height: selectionIndicatorHeight)
             } else {
-                selectionIndicatorFrame = CGRect(x: menuMargin, y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: menuItemWidth, height: selectionIndicatorHeight)
+                selectionIndicatorFrame = CGRect(x: (menuMargin + 50), y: menuHeight - selectionIndicatorHeight - selectionIndicatorBottomOffset, width: (menuItemWidth - 50), height: selectionIndicatorHeight)
             }
         }
         
@@ -560,7 +564,7 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
         
         //Stepper view
         if showStepperView {
-            selectionIndicatorFrame = CGRect(x: 0.0, y: menuHeight - selectionIndicatorHeight, width: menuScrollView.frame.width, height: selectionIndicatorHeight)
+            selectionIndicatorFrame = CGRect(x: 0.0, y: menuHeight - selectionIndicatorHeight, width: ((menuScrollView.frame.width) - 50 ), height: selectionIndicatorHeight)
             stepperView = UIView(frame: selectionIndicatorFrame)
             menuScrollView.addSubview(self.stepperView)
         }
@@ -568,7 +572,8 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
         //Check if icon indicator is active and has a valid icon indicator view
         if let indicatorView = self.selectionIndicatorCustomView, self.iconIndicator {
             //modify bounds of icon indicator
-            indicatorView.frame.origin.x = selectionIndicatorFrame.size.width/2-selectionIndicatorFrame.size.height/2
+            indicatorView.frame.origin.x = ((selectionIndicatorFrame.size.width/2-selectionIndicatorFrame.size.height/2) - 2)
+            print("Indicator Frame XXX \(indicatorView.frame.origin)")
             //add icon indicator to selection view container
             selectionIndicatorView.addSubview(indicatorView)
         }
@@ -824,8 +829,8 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                 var selectionIndicatorX : CGFloat = 0.0
                 
                 if self.useMenuLikeSegmentedControl {
-                    selectionIndicatorX = CGFloat(pageIndex) * (self.view.frame.width / CGFloat(self.controllerArray.count))
-                    selectionIndicatorWidth = self.view.frame.width / CGFloat(self.controllerArray.count)
+                    selectionIndicatorX = (CGFloat(pageIndex) * (self.view.frame.width / CGFloat(self.controllerArray.count)) + 25)
+                    selectionIndicatorWidth = (self.view.frame.width / CGFloat(self.controllerArray.count) - 50)
                 } else if self.menuItemWidthBasedOnTitleTextWidth {
                     selectionIndicatorWidth = self.menuItemWidths[pageIndex]
                     selectionIndicatorX = self.menuItems[pageIndex].frame.minX
@@ -1000,7 +1005,7 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
         let oldCurrentOrientationIsPortrait : Bool = currentOrientationIsPortrait
         currentOrientationIsPortrait = UIApplication.shared.statusBarOrientation.isPortrait
         
-        if (oldCurrentOrientationIsPortrait && UIDevice.current.orientation.isLandscape) || (!oldCurrentOrientationIsPortrait && UIDevice.current.orientation.isPortrait) {
+        if (oldCurrentOrientationIsPortrait && UIApplication.shared.statusBarOrientation.isLandscape) || (!oldCurrentOrientationIsPortrait && UIApplication.shared.statusBarOrientation.isPortrait) {
             didLayoutSubviewsAfterRotation = true
             
             //Resize menu items if using as segmented control
